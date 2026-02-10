@@ -43,14 +43,14 @@ func FirewallStealthState() string {
 /* -------------------- Unexported Functions -------------------- */
 
 func firewallStateLinux() string {
-	// Check FirewallD first
-	if hasFirewalld := checkFirewalld(); hasFirewalld != "" {
-		return hasFirewalld
-	}
-
-	// Check UFW
+	// Check UFW first
 	if hasUfw := checkUfw(); hasUfw != "" {
 		return hasUfw
+	}
+
+	// Check Firewalld
+	if hasFirewalld := checkFirewalld(); hasFirewalld != "" {
+		return hasFirewalld
 	}
 
 	// Check nftables
@@ -87,7 +87,7 @@ func checkFirewalld() string {
 		sc := exitError.Sys().(syscall.WaitStatus).ExitStatus()
 		switch sc {
 		case 251:
-			return "[yellow]Running but failed(firewalld)[white]"
+			return "[yellow]Running but failed (firewalld)[white]"
 		case 252:
 			return "[red]Not running (firewalld)[white]"
 		default:
